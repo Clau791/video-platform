@@ -64,12 +64,12 @@ Randarea trimite `multipart/form-data` cu `video`, `text`, `voiceId` si `speedSc
 
 Serverul este in `server.mjs` si expune acelasi contract folosit de frontend. Ruleaza cu Node.js si apeleaza Gemini TTS prin `@google/genai`, apoi lipeste audio-ul in video cu `ffmpeg`.
 
-Implicit, serverul este configurat pentru cheia din Google Cloud Console / Agent Platform:
+Implicit, serverul este configurat pentru cheia din Google AI Studio:
 
-- backend SDK: Gemini Enterprise Agent Platform / Vertex AI
-- endpoint SDK: `https://aiplatform.googleapis.com`
-- API version: `v1beta1`
-- model default: `gemini-2.5-flash-tts`
+- backend SDK: Gemini Developer API
+- endpoint SDK: `https://generativelanguage.googleapis.com`
+- API version: `v1beta`
+- model default: `gemini-2.5-flash-preview-tts`
 
 Instalare pe VPS:
 
@@ -84,14 +84,13 @@ Variabile recomandate:
 ```bash
 PORT=8080
 PUBLIC_BASE_URL=http://152.67.155.30:8080
-CORS_ORIGIN=https://clau791.github.io
+CORS_ORIGIN=*
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=schimba-parola
 TOKEN_SECRET=un-secret-lung
-GENAI_BACKEND=enterprise
-GOOGLE_API_KEY=cheia-ta-agent-platform
-GOOGLE_CLOUD_LOCATION=global
-GEMINI_TTS_MODEL=gemini-2.5-flash-tts
+GENAI_BACKEND=gemini
+GEMINI_API_KEY=cheia-ta-google-ai-studio
+GEMINI_TTS_MODEL=gemini-2.5-flash-preview-tts
 ```
 
 Pornire:
@@ -114,4 +113,4 @@ Endpoint-uri server:
 
 Pentru GitHub Pages, VPS-ul trebuie expus prin HTTPS in productie; altfel browserul poate bloca request-urile din cauza mixed content.
 
-Pentru o cheie veche din Google AI Studio, seteaza `GENAI_BACKEND=gemini` si foloseste `GEMINI_API_KEY` sau `GOOGLE_API_KEY`; acel mod foloseste endpoint-ul `https://generativelanguage.googleapis.com`.
+Pentru Agent Platform / Vertex AI, seteaza `GENAI_BACKEND=enterprise` si foloseste ADC / service account. Pentru lansarea simpla cu API key din AI Studio, pastreaza `GENAI_BACKEND=gemini`.

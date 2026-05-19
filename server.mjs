@@ -20,7 +20,7 @@ const TOKEN_SECRET = process.env.TOKEN_SECRET || "change-this-token-secret";
 const GENAI_BACKEND = (
   process.env.GENAI_BACKEND ||
   process.env.GOOGLE_GENAI_USE_ENTERPRISE ||
-  "enterprise"
+  "gemini"
 ).toLowerCase();
 const USE_ENTERPRISE = ["1", "true", "enterprise", "vertex", "vertexai"].includes(
   GENAI_BACKEND,
