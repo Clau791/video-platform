@@ -59,3 +59,44 @@ export const API_BASE_URL = "http://152.67.155.30";
 - `GET /renders/:jobId`
 
 Randarea trimite `multipart/form-data` cu `video`, `text`, `voiceId` si `speedScale`.
+
+## Server VPS intr-un singur fisier
+
+Serverul este in `server.mjs` si expune acelasi contract folosit de frontend. Ruleaza cu Node.js si apeleaza Gemini TTS prin `@google/genai`, apoi lipeste audio-ul in video cu `ffmpeg`.
+
+Instalare pe VPS:
+
+```bash
+npm install
+sudo apt-get update
+sudo apt-get install -y ffmpeg
+```
+
+Variabile recomandate:
+
+```bash
+PORT=8080
+PUBLIC_BASE_URL=http://152.67.155.30:8080
+CORS_ORIGIN=https://clau791.github.io
+ADMIN_EMAIL=admin@video.local
+ADMIN_PASSWORD=schimba-parola
+TOKEN_SECRET=un-secret-lung
+GEMINI_API_KEY=cheia-ta-gemini
+```
+
+Pornire:
+
+```bash
+npm run server
+```
+
+Endpoint-uri server:
+
+- `GET /health`
+- `POST /auth/login`
+- `GET /voices`
+- `POST /voices/:voiceId/preview`
+- `POST /renders`
+- `GET /renders/:jobId`
+
+Pentru GitHub Pages, VPS-ul trebuie expus prin HTTPS in productie; altfel browserul poate bloca request-urile din cauza mixed content.
