@@ -1,6 +1,6 @@
 # Video TTS Studio
 
-Frontend React + Vite pentru upload video, selectie voce TTS, recomandare lungime text si randare video async. Aplicatia porneste pe mock API si are client pregatit pentru VPS-ul `http://152.67.155.30`.
+Frontend React + Vite pentru upload video, selectie voce TTS, recomandare lungime text si randare video async. Pentru lansarea simpla, acelasi server Node serveste si API-ul, si frontend-ul build-uit din `dist`.
 
 ## Rulare locala
 
@@ -44,10 +44,10 @@ in:
 export const API_MODE = "real" as const;
 ```
 
-Clientul real trimite cererile catre:
+Clientul real trimite cererile catre acelasi origin ca pagina servita de Node:
 
 ```ts
-export const API_BASE_URL = "http://152.67.155.30:8080";
+export const API_BASE_URL = "";
 ```
 
 ## Contract API asteptat
@@ -97,8 +97,11 @@ GEMINI_TTS_MODEL=gemini-2.5-flash-tts
 Pornire:
 
 ```bash
+npm run build
 npm run server
 ```
+
+Aplicatia completa va fi disponibila la `http://152.67.155.30:8080`.
 
 Endpoint-uri server:
 

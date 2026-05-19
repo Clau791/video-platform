@@ -40,6 +40,8 @@ const UPLOAD_DIR = path.join(DATA_DIR, "uploads");
 const OUTPUT_DIR = path.join(DATA_DIR, "outputs");
 const PREVIEW_DIR = path.join(DATA_DIR, "previews");
 const TMP_DIR = path.join(DATA_DIR, "tmp");
+const DIST_DIR = path.join(__dirname, "dist");
+const INDEX_HTML_PATH = path.join(DIST_DIR, "index.html");
 
 const app = express();
 const jobs = new Map();
@@ -524,6 +526,17 @@ app.get("/renders/:jobId", requireAuth, (req, res) => {
     error: job.error,
     resultUrl: job.resultUrl,
   });
+});
+
+app.use(express.static(DIST_DIR));
+
+app.get("/{*splat}", async (_req, res, next) => {
+  try {
+    await fs.access(INDEX_HTML_PATH);
+    res.sendFile(INDEX_HTML_PATH);
+  } catch (error) {
+    next(error);
+  }
 });
 
 app.use((error, _req, res, _next) => {
