@@ -16,9 +16,20 @@ const CORS_ORIGIN = process.env.CORS_ORIGIN || "*";
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@video.local";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "change-me";
 const TOKEN_SECRET = process.env.TOKEN_SECRET || "change-this-token-secret";
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
+const GENAI_BACKEND = (
+  process.env.GENAI_BACKEND ||
+  process.env.GOOGLE_GENAI_USE_ENTERPRISE ||
+  "enterprise"
+).toLowerCase();
+const USE_ENTERPRISE = ["1", "true", "enterprise", "vertex", "vertexai"].includes(
+  GENAI_BACKEND,
+);
+const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY || "";
+const GOOGLE_CLOUD_PROJECT = process.env.GOOGLE_CLOUD_PROJECT || "";
+const GOOGLE_CLOUD_LOCATION = process.env.GOOGLE_CLOUD_LOCATION || "global";
 const GEMINI_TTS_MODEL =
-  process.env.GEMINI_TTS_MODEL || "gemini-2.5-flash-preview-tts";
+  process.env.GEMINI_TTS_MODEL ||
+  (USE_ENTERPRISE ? "gemini-2.5-flash-tts" : "gemini-2.5-flash-preview-tts");
 const MAX_VIDEO_SIZE_BYTES =
   Number(process.env.MAX_VIDEO_SIZE_MB || 500) * 1024 * 1024;
 const DATA_DIR = process.env.DATA_DIR
@@ -31,7 +42,7 @@ const TMP_DIR = path.join(DATA_DIR, "tmp");
 
 const app = express();
 const jobs = new Map();
-const ai = GEMINI_API_KEY ? new GoogleGenAI({ apiKey: GEMINI_API_KEY }) : null;
+const ai = createGoogleGenAIClient();
 
 const voices = [
   {
@@ -89,6 +100,38 @@ const upload = multer({
     callback(null, true);
   },
 });
+
+function createGoogleGenAIClient() {
+  if (USE_ENTERPRISE) {
+    if (GOOGLE_API_KEY) {
+      return new GoogleGenAI({
+        enterprise: true,
+        apiKey: GOOGLE_API_KEY,
+        apiVersion: "v1beta1",
+      });
+    }
+
+    if (GOOGLE_CLOUD_PROJECT && GOOGLE_CLOUD_LOCATION) {
+      return new GoogleGenAI({
+        enterprise: true,
+        project: GOOGLE_CLOUD_PROJECT,
+        location: GOOGLE_CLOUD_LOCATION,
+        apiVersion: "v1beta1",
+      });
+    }
+
+    return null;
+  }
+
+  if (!GOOGLE_API_KEY) {
+    return null;
+  }
+
+  return new GoogleGenAI({
+    apiKey: GOOGLE_API_KEY,
+    apiVersion: "v1beta",
+  });
+}
 
 app.use(express.json({ limit: "1mb" }));
 app.use(
@@ -216,7 +259,11 @@ function parseSampleRate(mimeType = "") {
 
 async function writeGeminiTtsWav({ text, voiceId, outputPath }) {
   if (!ai) {
-    throw new Error("Lipseste GEMINI_API_KEY pe server.");
+    throw new Error(
+      USE_ENTERPRISE
+        ? "Lipseste GOOGLE_API_KEY sau configuratia ADC GOOGLE_CLOUD_PROJECT/GOOGLE_CLOUD_LOCATION."
+        : "Lipseste GOOGLE_API_KEY sau GEMINI_API_KEY pe server.",
+    );
   }
 
   const voice = getVoice(voiceId);
@@ -366,7 +413,10 @@ async function processRender(jobId) {
 app.get("/health", (_req, res) => {
   res.json({
     ok: true,
-    gemini: Boolean(GEMINI_API_KEY),
+    genaiBackend: USE_ENTERPRISE ? "enterprise" : "gemini",
+    genaiReady: Boolean(ai),
+    model: GEMINI_TTS_MODEL,
+    location: USE_ENTERPRISE ? GOOGLE_CLOUD_LOCATION : undefined,
     ffmpeg: "required",
   });
 });
