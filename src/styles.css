@@ -1,0 +1,530 @@
+:root {
+  color-scheme: light;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  background: #eef2f6;
+  color: #172033;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.auth-shell,
+.app-shell {
+  min-height: 100vh;
+}
+
+.auth-shell {
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background:
+    linear-gradient(135deg, rgba(20, 83, 45, 0.12), transparent 38%),
+    linear-gradient(315deg, rgba(14, 116, 144, 0.14), transparent 34%),
+    #eef2f6;
+}
+
+.auth-panel {
+  width: min(100%, 420px);
+  padding: 30px;
+  border: 1px solid #d8e0ea;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
+}
+
+.brand-mark {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border-radius: 8px;
+  color: #f8fafc;
+  background: #0f766e;
+}
+
+.auth-heading,
+.panel-title {
+  margin-top: 18px;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: #0f766e;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 0;
+  font-size: clamp(1.8rem, 4vw, 2.55rem);
+  line-height: 1.04;
+}
+
+h2 {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.auth-form,
+.text-field,
+.workspace-grid,
+.side-stack,
+.voice-list,
+.result-actions {
+  display: grid;
+}
+
+.auth-form {
+  gap: 16px;
+  margin-top: 28px;
+}
+
+label {
+  color: #2c3749;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+input,
+textarea {
+  width: 100%;
+  margin-top: 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #172033;
+  outline: none;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+input {
+  min-height: 44px;
+  padding: 0 13px;
+}
+
+textarea {
+  min-height: 180px;
+  resize: vertical;
+  padding: 13px;
+  line-height: 1.55;
+}
+
+input:focus,
+textarea:focus {
+  border-color: #0f766e;
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.16);
+}
+
+.primary-button,
+.ghost-button,
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 8px;
+  font-weight: 800;
+  text-decoration: none;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease;
+}
+
+.primary-button {
+  min-height: 48px;
+  gap: 10px;
+  padding: 0 18px;
+  color: #f8fafc;
+  background: #0f766e;
+  box-shadow: 0 14px 28px rgba(15, 118, 110, 0.22);
+}
+
+.primary-button:hover:not(:disabled),
+.ghost-button:hover:not(:disabled),
+.icon-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.primary-button:hover:not(:disabled) {
+  background: #115e59;
+}
+
+.ghost-button {
+  min-height: 40px;
+  gap: 8px;
+  padding: 0 13px;
+  border: 1px solid #cbd5e1;
+  color: #172033;
+  background: #ffffff;
+}
+
+.ghost-button.compact {
+  min-height: 34px;
+  font-size: 0.82rem;
+}
+
+.icon-button {
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  border: 1px solid #d8e0ea;
+  color: #172033;
+  background: #ffffff;
+}
+
+.app-shell {
+  padding: 22px;
+  background:
+    linear-gradient(180deg, #f8fafc 0, #eef2f6 260px),
+    #eef2f6;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: min(100%, 1180px);
+  margin: 0 auto 18px;
+  gap: 16px;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.session-email {
+  max-width: min(34vw, 320px);
+  overflow: hidden;
+  color: #4b5563;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.workspace-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 410px);
+  width: min(100%, 1180px);
+  margin: 0 auto;
+  gap: 18px;
+  align-items: start;
+}
+
+.side-stack,
+.voice-list,
+.result-actions {
+  gap: 14px;
+}
+
+.panel {
+  border: 1px solid #d8e0ea;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+}
+
+.compose-panel,
+.panel {
+  padding: 18px;
+}
+
+.panel-title,
+.panel-title > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.panel-title {
+  margin: 0 0 16px;
+}
+
+.panel-title svg {
+  color: #0f766e;
+}
+
+.panel-title-row {
+  justify-content: space-between;
+}
+
+.drop-zone {
+  display: grid;
+  min-height: 148px;
+  place-items: center;
+  margin-bottom: 14px;
+  padding: 18px;
+  border: 1px dashed #94a3b8;
+  border-radius: 8px;
+  color: #172033;
+  text-align: center;
+  background: #f8fafc;
+}
+
+.drop-zone input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+.drop-zone svg {
+  color: #0f766e;
+}
+
+.drop-zone span,
+.drop-zone small {
+  display: block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.drop-zone span {
+  margin-top: 10px;
+  font-weight: 800;
+}
+
+.drop-zone small,
+.muted,
+.voice-card small {
+  color: #64748b;
+  font-size: 0.84rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.video-preview {
+  display: block;
+  width: 100%;
+  max-height: 360px;
+  margin-bottom: 14px;
+  border-radius: 8px;
+  background: #0f172a;
+}
+
+.result-video {
+  max-height: 240px;
+  margin-bottom: 0;
+}
+
+.text-field {
+  gap: 8px;
+}
+
+.recommendation-band {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.recommendation-band > div {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #d8e0ea;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.metric-label {
+  margin-bottom: 5px;
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.recommendation-band strong {
+  display: block;
+  overflow-wrap: anywhere;
+  color: #172033;
+  font-size: 1.05rem;
+}
+
+.warning-text,
+.form-error {
+  border-radius: 8px;
+  padding: 11px 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.warning-text {
+  color: #7c2d12;
+  background: #ffedd5;
+}
+
+.form-error {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.voice-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid #d8e0ea;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.voice-card.selected {
+  border-color: #0f766e;
+  background: #ecfdf5;
+}
+
+.voice-card input {
+  width: 18px;
+  min-height: 18px;
+  margin: 0;
+  accent-color: #0f766e;
+}
+
+.voice-card-main {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  gap: 4px;
+}
+
+.voice-card-main strong,
+.voice-card-main small {
+  overflow-wrap: anywhere;
+}
+
+.status-box {
+  display: grid;
+  gap: 12px;
+}
+
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #334155;
+  font-weight: 800;
+  text-transform: capitalize;
+}
+
+.progress-track {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e2e8f0;
+}
+
+.progress-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #0f766e;
+  transition: width 220ms ease;
+}
+
+.spin {
+  animation: spin 900ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 940px) {
+  .workspace-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-shell,
+  .auth-shell {
+    padding: 14px;
+  }
+
+  .auth-panel,
+  .compose-panel,
+  .panel {
+    padding: 14px;
+  }
+
+  .topbar {
+    align-items: flex-start;
+  }
+
+  .topbar-actions {
+    justify-content: flex-end;
+  }
+
+  .session-email {
+    display: none;
+  }
+
+  .recommendation-band {
+    grid-template-columns: 1fr;
+  }
+
+  .panel-title-row {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .voice-card {
+    align-items: flex-start;
+  }
+
+  .voice-card .icon-button {
+    margin-top: -2px;
+  }
+}
