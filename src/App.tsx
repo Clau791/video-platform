@@ -18,7 +18,7 @@ export default function App() {
   return (
     <Dashboard
       token={auth.token}
-      userEmail={auth.user?.email || ""}
+      username={auth.user?.username || ""}
       onLogout={auth.logout}
     />
   );

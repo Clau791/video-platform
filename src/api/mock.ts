@@ -100,16 +100,16 @@ const createTonePreviewUrl = (voiceId: string) => {
 };
 
 export const mockApiClient: ApiClient = {
-  async login(email: string, password: string): Promise<LoginResponse> {
+  async login(username: string, password: string): Promise<LoginResponse> {
     await wait(450);
 
-    if (!email.trim() || !password.trim()) {
-      throw new Error("Completeaza emailul si parola.");
+    if (!username.trim() || !password.trim()) {
+      throw new Error("Completeaza numele si parola.");
     }
 
     return {
       token: `mock-token-${crypto.randomUUID()}`,
-      user: { email: email.trim() },
+      user: { username: username.trim() },
     };
   },
 

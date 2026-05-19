@@ -29,7 +29,7 @@ import {
 
 type DashboardProps = {
   token: string;
-  userEmail: string;
+  username: string;
   onLogout: () => void;
 };
 
@@ -56,7 +56,7 @@ const formatFileSize = (bytes: number) => {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 };
 
-export function Dashboard({ token, userEmail, onLogout }: DashboardProps) {
+export function Dashboard({ token, username, onLogout }: DashboardProps) {
   const [voices, setVoices] = useState<Voice[]>([]);
   const [voicesError, setVoicesError] = useState("");
   const [isLoadingVoices, setIsLoadingVoices] = useState(true);
@@ -273,7 +273,7 @@ export function Dashboard({ token, userEmail, onLogout }: DashboardProps) {
           <h1>Workspace</h1>
         </div>
         <div className="topbar-actions">
-          <span className="session-email">{userEmail}</span>
+          <span className="session-user">{username}</span>
           <button className="icon-button" type="button" onClick={onLogout} title="Logout">
             <LogOut size={18} />
           </button>

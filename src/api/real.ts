@@ -33,11 +33,11 @@ const authHeaders = (token: string) => ({
 });
 
 export const realApiClient: ApiClient = {
-  login(email: string, password: string): Promise<LoginResponse> {
+  login(username: string, password: string): Promise<LoginResponse> {
     return request<LoginResponse>("/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ username, password }),
     });
   },
 

@@ -13,7 +13,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT || 8080);
 const PUBLIC_BASE_URL = process.env.PUBLIC_BASE_URL || `http://localhost:${PORT}`;
 const CORS_ORIGIN = process.env.CORS_ORIGIN || "*";
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@video.local";
+const ADMIN_USERNAME =
+  process.env.ADMIN_USERNAME || process.env.ADMIN_EMAIL || "admin";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "change-me";
 const TOKEN_SECRET = process.env.TOKEN_SECRET || "change-this-token-secret";
 const GENAI_BACKEND = (
@@ -155,9 +156,9 @@ function sign(value) {
     .digest("base64url");
 }
 
-function createToken(email) {
+function createToken(username) {
   const header = safeBase64Url(JSON.stringify({ alg: "HS256", typ: "JWT" }));
-  const payload = safeBase64Url(JSON.stringify({ email, iat: Date.now() }));
+  const payload = safeBase64Url(JSON.stringify({ username, iat: Date.now() }));
   const unsigned = `${header}.${payload}`;
   return `${unsigned}.${sign(unsigned)}`;
 }
@@ -192,7 +193,7 @@ function requireAuth(req, res, next) {
   const token = header.startsWith("Bearer ") ? header.slice(7) : "";
   const payload = token ? verifyToken(token) : null;
 
-  if (!payload?.email) {
+  if (!payload?.username) {
     res.status(401).json({ error: "Token invalid sau lipsa." });
     return;
   }
@@ -422,16 +423,17 @@ app.get("/health", (_req, res) => {
 });
 
 app.post("/auth/login", (req, res) => {
-  const { email, password } = req.body || {};
+  const { username, email, password } = req.body || {};
+  const loginName = typeof username === "string" ? username : email;
 
-  if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
-    res.status(401).json({ error: "Email sau parola incorecta." });
+  if (loginName !== ADMIN_USERNAME || password !== ADMIN_PASSWORD) {
+    res.status(401).json({ error: "Nume sau parola incorecta." });
     return;
   }
 
   res.json({
-    token: createToken(email),
-    user: { email },
+    token: createToken(loginName),
+    user: { username: loginName },
   });
 });
 

@@ -239,7 +239,7 @@ textarea:focus {
   min-width: 0;
 }
 
-.session-email {
+.session-user {
   max-width: min(34vw, 320px);
   overflow: hidden;
   color: #4b5563;
@@ -507,7 +507,7 @@ textarea:focus {
     justify-content: flex-end;
   }
 
-  .session-email {
+  .session-user {
     display: none;
   }
 

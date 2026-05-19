@@ -1,7 +1,7 @@
 export type ApiMode = "mock" | "real";
 
 export type User = {
-  email: string;
+  username: string;
 };
 
 export type LoginResponse = {
@@ -39,7 +39,7 @@ export type RenderPayload = {
 };
 
 export type ApiClient = {
-  login(email: string, password: string): Promise<LoginResponse>;
+  login(username: string, password: string): Promise<LoginResponse>;
   getVoices(token: string): Promise<Voice[]>;
   previewVoice(token: string, voiceId: string, text: string): Promise<string>;
   createRender(token: string, payload: RenderPayload): Promise<RenderJob>;

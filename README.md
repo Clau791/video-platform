@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-Login-ul mock accepta orice email si parola necompletate corect. Token-ul este salvat in `localStorage` fara expirare impusa de frontend.
+Login-ul mock accepta orice nume si parola necompletate corect. Token-ul este salvat in `localStorage` fara expirare impusa de frontend.
 
 ## Build
 
@@ -85,7 +85,7 @@ Variabile recomandate:
 PORT=8080
 PUBLIC_BASE_URL=http://152.67.155.30:8080
 CORS_ORIGIN=https://clau791.github.io
-ADMIN_EMAIL=admin@video.local
+ADMIN_USERNAME=admin
 ADMIN_PASSWORD=schimba-parola
 TOKEN_SECRET=un-secret-lung
 GENAI_BACKEND=enterprise

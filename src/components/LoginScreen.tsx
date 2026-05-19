@@ -4,11 +4,11 @@ import { LockKeyhole, Sparkles } from "lucide-react";
 type LoginScreenProps = {
   error: string;
   isLoading: boolean;
-  onLogin: (email: string, password: string) => Promise<void>;
+  onLogin: (username: string, password: string) => Promise<void>;
 };
 
 export function LoginScreen({ error, isLoading, onLogin }: LoginScreenProps) {
-  const [email, setEmail] = useState("demo@video.local");
+  const [username, setUsername] = useState("demo");
   const [password, setPassword] = useState("demo-password");
   const [localError, setLocalError] = useState("");
 
@@ -17,7 +17,7 @@ export function LoginScreen({ error, isLoading, onLogin }: LoginScreenProps) {
     setLocalError("");
 
     try {
-      await onLogin(email, password);
+      await onLogin(username, password);
     } catch {
       setLocalError("Nu am putut porni sesiunea.");
     }
@@ -36,14 +36,13 @@ export function LoginScreen({ error, isLoading, onLogin }: LoginScreenProps) {
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <label>
-            Email
+            Nume
             <input
-              autoComplete="email"
-              inputMode="email"
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="email@domeniu.ro"
+              autoComplete="username"
+              type="text"
+              value={username}
+              onChange={(event) => setUsername(event.target.value)}
+              placeholder="Nume utilizator"
             />
           </label>
 

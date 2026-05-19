@@ -38,12 +38,12 @@ export const useAuth = () => {
     }
   }, [state]);
 
-  const login = useCallback(async (email: string, password: string) => {
+  const login = useCallback(async (username: string, password: string) => {
     setIsLoading(true);
     setError("");
 
     try {
-      const response = await apiClient.login(email, password);
+      const response = await apiClient.login(username, password);
       setState({ token: response.token, user: response.user });
     } catch (caughtError) {
       const message =
