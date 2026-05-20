@@ -33,7 +33,8 @@ type DashboardProps = {
   onLogout: () => void;
 };
 
-const defaultPreviewText = "Salut! Acesta este un preview audio pentru vocea selectata.";
+const defaultPreviewText =
+  "Buna, acesta este un preview audio in limba romana pentru vocea selectata.";
 
 const formatSeconds = (seconds: number | null) => {
   if (!seconds || Number.isNaN(seconds)) {
@@ -202,7 +203,9 @@ export function Dashboard({ token, username, onLogout }: DashboardProps) {
       const audioUrl = await apiClient.previewVoice(
         token,
         voiceId,
-        text.trim() || defaultPreviewText,
+        voices.find((voice) => voice.id === voiceId)?.sampleText ||
+          text.trim() ||
+          defaultPreviewText,
       );
       previewUrlsRef.current.push(audioUrl);
       setVoicePreviewUrls((current) => ({
@@ -416,6 +419,9 @@ export function Dashboard({ token, username, onLogout }: DashboardProps) {
                         {voice.gender ? ` · ${voice.gender}` : ""}
                         {voice.style ? ` · ${voice.style}` : ""}
                       </small>
+                      {voice.sampleText && (
+                        <em className="voice-sample">{voice.sampleText}</em>
+                      )}
                     </span>
                     <button
                       className="icon-button"

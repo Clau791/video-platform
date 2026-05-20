@@ -15,6 +15,7 @@ export type Voice = {
   language: string;
   gender?: string;
   style?: string;
+  sampleText?: string;
   previewUrl?: string;
 };
 

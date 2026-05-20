@@ -54,6 +54,8 @@ const voices = [
     language: "Multilingual",
     gender: "Feminin",
     style: "clar, profesional",
+    sampleText:
+      "Buna, sunt vocea Kore si voi citi natural textul tau in limba romana.",
   },
   {
     id: "Puck",
@@ -61,6 +63,8 @@ const voices = [
     language: "Multilingual",
     gender: "Masculin",
     style: "energic, conversațional",
+    sampleText:
+      "Buna, sunt vocea Puck si pot livra un mesaj romanesc energic si clar.",
   },
   {
     id: "Charon",
@@ -68,6 +72,8 @@ const voices = [
     language: "Multilingual",
     gender: "Masculin",
     style: "profund, narativ",
+    sampleText:
+      "Buna, sunt vocea Charon si pot narra calm povestea videoclipului tau.",
   },
   {
     id: "Aoede",
@@ -75,6 +81,8 @@ const voices = [
     language: "Multilingual",
     gender: "Feminin",
     style: "cald, expresiv",
+    sampleText:
+      "Buna, sunt vocea Aoede si pot spune textul tau cu ton cald si expresiv.",
   },
   {
     id: "Fenrir",
@@ -82,6 +90,8 @@ const voices = [
     language: "Multilingual",
     gender: "Masculin",
     style: "ferm, studio",
+    sampleText:
+      "Buna, sunt vocea Fenrir si pot prezenta mesajul intr-un stil ferm de studio.",
   },
   {
     id: "Leda",
@@ -89,6 +99,8 @@ const voices = [
     language: "Multilingual",
     gender: "Feminin",
     style: "natural, curat",
+    sampleText:
+      "Buna, sunt vocea Leda si pot rosti propozitii romanesti natural si curat.",
   },
 ];
 
@@ -261,7 +273,7 @@ function parseSampleRate(mimeType = "") {
 }
 
 function buildTtsPrompt(text) {
-  return `Read the following text aloud exactly as written, in a natural voice. Text: """${text}"""`;
+  return `Rosteste in limba romana, clar si natural, exact textul dintre ghilimele. Nu adauga alte cuvinte. Text: "${text}"`;
 }
 
 async function writeGeminiTtsWav({ text, voiceId, outputPath }) {
@@ -457,7 +469,7 @@ app.post("/voices/:voiceId/preview", requireAuth, async (req, res) => {
     const text =
       typeof req.body?.text === "string" && req.body.text.trim()
         ? req.body.text.trim()
-        : "Salut! Acesta este un preview audio pentru vocea selectata.";
+        : getVoice(req.params.voiceId).sampleText;
     const voice = getVoice(req.params.voiceId);
     const filename = `${crypto.randomUUID()}-${voice.id}.wav`;
     const outputPath = path.join(PREVIEW_DIR, filename);

@@ -437,6 +437,14 @@ textarea:focus {
   gap: 4px;
 }
 
+.voice-sample {
+  color: #334155;
+  font-size: 0.82rem;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
 .voice-preview-player {
   grid-column: 1 / -1;
   width: 100%;
