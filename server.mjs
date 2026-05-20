@@ -458,7 +458,7 @@ function getVoice(voiceId) {
 }
 
 function jobUrl(folder, filename) {
-  return `${PUBLIC_BASE_URL}/files/${folder}/${encodeURIComponent(filename)}`;
+  return `/files/${folder}/${encodeURIComponent(filename)}`;
 }
 
 function runCommand(command, args, timeoutMs = COMMAND_TIMEOUT_MS) {

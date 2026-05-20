@@ -270,7 +270,9 @@ export function Dashboard({ token, username, onLogout }: DashboardProps) {
             defaultPreviewText,
         );
         previewUrlsRef.current.push(audioUrl);
-        void cacheVoicePreview(voiceId, audioUrl);
+        void cacheVoicePreview(voiceId, audioUrl).catch(() => {
+          // Cache-ul este optional; preview-ul ramane redabil din URL-ul primit.
+        });
       }
 
       setVoicePreviewUrls((current) => ({
