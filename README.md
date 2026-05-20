@@ -69,7 +69,7 @@ Implicit, serverul este configurat pentru cheia din Google AI Studio:
 - backend SDK: Gemini Developer API
 - endpoint SDK: `https://generativelanguage.googleapis.com`
 - API version: `v1beta`
-- model default: `gemini-2.5-flash-preview-tts`
+- model default: `gemini-3.1-flash-tts-preview`
 
 Instalare pe VPS:
 
@@ -90,7 +90,7 @@ ADMIN_PASSWORD=schimba-parola
 TOKEN_SECRET=un-secret-lung
 GENAI_BACKEND=gemini
 GEMINI_API_KEY=cheia-ta-google-ai-studio
-GEMINI_TTS_MODEL=gemini-2.5-flash-preview-tts
+GEMINI_TTS_MODEL=gemini-3.1-flash-tts-preview
 ```
 
 Pornire:

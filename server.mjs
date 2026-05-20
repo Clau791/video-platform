@@ -30,7 +30,7 @@ const GOOGLE_CLOUD_PROJECT = process.env.GOOGLE_CLOUD_PROJECT || "";
 const GOOGLE_CLOUD_LOCATION = process.env.GOOGLE_CLOUD_LOCATION || "global";
 const GEMINI_TTS_MODEL =
   process.env.GEMINI_TTS_MODEL ||
-  (USE_ENTERPRISE ? "gemini-2.5-flash-tts" : "gemini-2.5-flash-preview-tts");
+  (USE_ENTERPRISE ? "gemini-2.5-flash-tts" : "gemini-3.1-flash-tts-preview");
 const MAX_VIDEO_SIZE_BYTES =
   Number(process.env.MAX_VIDEO_SIZE_MB || 500) * 1024 * 1024;
 const DATA_DIR = process.env.DATA_DIR
@@ -260,6 +260,10 @@ function parseSampleRate(mimeType = "") {
   return match ? Number(match[1]) : 24000;
 }
 
+function buildTtsPrompt(text) {
+  return `Read the following text aloud exactly as written, in a natural voice. Text: """${text}"""`;
+}
+
 async function writeGeminiTtsWav({ text, voiceId, outputPath }) {
   if (!ai) {
     throw new Error(
@@ -272,7 +276,7 @@ async function writeGeminiTtsWav({ text, voiceId, outputPath }) {
   const voice = getVoice(voiceId);
   const response = await ai.models.generateContent({
     model: GEMINI_TTS_MODEL,
-    contents: [{ parts: [{ text }] }],
+    contents: [{ parts: [{ text: buildTtsPrompt(text) }] }],
     config: {
       responseModalities: ["AUDIO"],
       speechConfig: {

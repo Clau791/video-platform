@@ -409,7 +409,8 @@ textarea:focus {
 }
 
 .voice-card {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 12px;
   padding: 12px;
@@ -432,9 +433,14 @@ textarea:focus {
 
 .voice-card-main {
   display: grid;
-  flex: 1;
   min-width: 0;
   gap: 4px;
+}
+
+.voice-preview-player {
+  grid-column: 1 / -1;
+  width: 100%;
+  height: 36px;
 }
 
 .voice-card-main strong,
@@ -518,10 +524,6 @@ textarea:focus {
   .panel-title-row {
     align-items: flex-start;
     gap: 12px;
-  }
-
-  .voice-card {
-    align-items: flex-start;
   }
 
   .voice-card .icon-button {

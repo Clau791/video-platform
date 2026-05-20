@@ -62,6 +62,7 @@ export function Dashboard({ token, username, onLogout }: DashboardProps) {
   const [isLoadingVoices, setIsLoadingVoices] = useState(true);
   const [selectedVoiceId, setSelectedVoiceId] = useState("");
   const [previewingVoiceId, setPreviewingVoiceId] = useState("");
+  const [voicePreviewUrls, setVoicePreviewUrls] = useState<Record<string, string>>({});
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoUrl, setVideoUrl] = useState("");
   const [durationSeconds, setDurationSeconds] = useState<number | null>(null);
@@ -204,11 +205,19 @@ export function Dashboard({ token, username, onLogout }: DashboardProps) {
         text.trim() || defaultPreviewText,
       );
       previewUrlsRef.current.push(audioUrl);
+      setVoicePreviewUrls((current) => ({
+        ...current,
+        [voiceId]: audioUrl,
+      }));
       const audio = new Audio(audioUrl);
       audioRef.current = audio;
       audio.addEventListener("ended", () => setPreviewingVoiceId(""));
       audio.addEventListener("error", () => setPreviewingVoiceId(""));
-      await audio.play();
+      await audio.play().catch(() => {
+        setFormError(
+          "Preview-ul a fost generat. Foloseste playerul audio afisat pentru redare.",
+        );
+      });
     } catch (caughtError) {
       const message =
         caughtError instanceof Error
@@ -420,6 +429,13 @@ export function Dashboard({ token, username, onLogout }: DashboardProps) {
                         <Volume2 size={17} />
                       )}
                     </button>
+                    {voicePreviewUrls[voice.id] && (
+                      <audio
+                        className="voice-preview-player"
+                        controls
+                        src={voicePreviewUrls[voice.id]}
+                      />
+                    )}
                   </label>
                 ))
               )}
