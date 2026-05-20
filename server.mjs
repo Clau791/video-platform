@@ -153,6 +153,12 @@ function createGoogleGenAIClient() {
 }
 
 app.use(express.json({ limit: "1mb" }));
+app.use((req, _res, next) => {
+  if (req.path.includes("/preview") || req.path === "/health") {
+    console.log(`${new Date().toISOString()} ${req.method} ${req.path}`);
+  }
+  next();
+});
 app.use(
   cors({
     origin: CORS_ORIGIN === "*" ? true : CORS_ORIGIN.split(","),
@@ -597,7 +603,15 @@ app.get("/renders/:jobId", requireAuth, (req, res) => {
   });
 });
 
-app.use(express.static(DIST_DIR));
+app.use(
+  express.static(DIST_DIR, {
+    etag: false,
+    lastModified: false,
+    setHeaders: (res) => {
+      res.setHeader("Cache-Control", "no-store");
+    },
+  }),
+);
 
 app.get("/{*splat}", async (_req, res, next) => {
   try {
