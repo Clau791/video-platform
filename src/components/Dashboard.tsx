@@ -35,6 +35,8 @@ type DashboardProps = {
 
 const defaultPreviewText =
   "Buna, acesta este un preview audio in limba romana pentru vocea selectata.";
+const VOICE_PREVIEW_CACHE_PREFIX = "video-tts-preview:";
+const VOICE_PREVIEW_CACHE_VERSION = "v2";
 
 const formatSeconds = (seconds: number | null) => {
   if (!seconds || Number.isNaN(seconds)) {
@@ -55,6 +57,46 @@ const formatFileSize = (bytes: number) => {
   }
 
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+};
+
+const readCachedVoicePreview = (voiceId: string) => {
+  try {
+    const cached = localStorage.getItem(
+      `${VOICE_PREVIEW_CACHE_PREFIX}${VOICE_PREVIEW_CACHE_VERSION}:${voiceId}`,
+    );
+
+    return cached || "";
+  } catch {
+    return "";
+  }
+};
+
+const cacheVoicePreview = async (voiceId: string, audioUrl: string) => {
+  const response = await fetch(audioUrl);
+  if (!response.ok) {
+    return;
+  }
+
+  const blob = await response.blob();
+  const reader = new FileReader();
+
+  await new Promise<void>((resolve, reject) => {
+    reader.addEventListener("load", () => {
+      try {
+        if (typeof reader.result === "string") {
+          localStorage.setItem(
+            `${VOICE_PREVIEW_CACHE_PREFIX}${VOICE_PREVIEW_CACHE_VERSION}:${voiceId}`,
+            reader.result,
+          );
+        }
+        resolve();
+      } catch {
+        resolve();
+      }
+    });
+    reader.addEventListener("error", () => reject(reader.error));
+    reader.readAsDataURL(blob);
+  });
 };
 
 export function Dashboard({ token, username, onLogout }: DashboardProps) {
@@ -97,6 +139,23 @@ export function Dashboard({ token, username, onLogout }: DashboardProps) {
   useEffect(() => {
     void loadVoices();
   }, [loadVoices]);
+
+  useEffect(() => {
+    setVoicePreviewUrls((current) => {
+      const next = { ...current };
+
+      voices.forEach((voice) => {
+        if (!next[voice.id]) {
+          const cachedPreview = readCachedVoicePreview(voice.id);
+          if (cachedPreview) {
+            next[voice.id] = cachedPreview;
+          }
+        }
+      });
+
+      return next;
+    });
+  }, [voices]);
 
   useEffect(() => {
     return () => {
@@ -200,14 +259,20 @@ export function Dashboard({ token, username, onLogout }: DashboardProps) {
 
     try {
       audioRef.current?.pause();
-      const audioUrl = await apiClient.previewVoice(
-        token,
-        voiceId,
-        voices.find((voice) => voice.id === voiceId)?.sampleText ||
-          text.trim() ||
-          defaultPreviewText,
-      );
-      previewUrlsRef.current.push(audioUrl);
+      let audioUrl = readCachedVoicePreview(voiceId);
+
+      if (!audioUrl) {
+        audioUrl = await apiClient.previewVoice(
+          token,
+          voiceId,
+          voices.find((voice) => voice.id === voiceId)?.sampleText ||
+            text.trim() ||
+            defaultPreviewText,
+        );
+        previewUrlsRef.current.push(audioUrl);
+        void cacheVoicePreview(voiceId, audioUrl);
+      }
+
       setVoicePreviewUrls((current) => ({
         ...current,
         [voiceId]: audioUrl,
