@@ -114,6 +114,8 @@ export function Dashboard({ token, username, onLogout }: DashboardProps) {
   const [jobId, setJobId] = useState("");
   const [jobStatus, setJobStatus] = useState<RenderJobStatus | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [renderPanelHeight, setRenderPanelHeight] = useState<number | null>(null);
+  const renderPanelRef = useRef<HTMLElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const previewUrlsRef = useRef<string[]>([]);
 
@@ -139,6 +141,34 @@ export function Dashboard({ token, username, onLogout }: DashboardProps) {
   useEffect(() => {
     void loadVoices();
   }, [loadVoices]);
+
+  useEffect(() => {
+    const panel = renderPanelRef.current;
+
+    if (!panel) {
+      return undefined;
+    }
+
+    const updatePanelHeight = () => {
+      if (window.innerWidth <= 940) {
+        setRenderPanelHeight(null);
+        return;
+      }
+
+      setRenderPanelHeight(Math.round(panel.getBoundingClientRect().height));
+    };
+
+    updatePanelHeight();
+
+    const resizeObserver = new ResizeObserver(updatePanelHeight);
+    resizeObserver.observe(panel);
+    window.addEventListener("resize", updatePanelHeight);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", updatePanelHeight);
+    };
+  }, [durationSeconds, formError, text, videoUrl]);
 
   useEffect(() => {
     setVoicePreviewUrls((current) => {
@@ -360,7 +390,11 @@ export function Dashboard({ token, username, onLogout }: DashboardProps) {
       </header>
 
       <form className="workspace-grid" onSubmit={handleSubmit}>
-        <section className="panel compose-panel" aria-labelledby="compose-title">
+        <section
+          className="panel compose-panel"
+          ref={renderPanelRef}
+          aria-labelledby="compose-title"
+        >
           <div className="panel-title">
             <Wand2 size={20} />
             <h2 id="compose-title">Randare video</h2>
@@ -438,7 +472,15 @@ export function Dashboard({ token, username, onLogout }: DashboardProps) {
         </section>
 
         <aside className="side-stack">
-          <section className="panel" aria-labelledby="voices-title">
+          <section
+            className="panel voices-panel"
+            style={
+              renderPanelHeight
+                ? { height: renderPanelHeight, maxHeight: renderPanelHeight }
+                : undefined
+            }
+            aria-labelledby="voices-title"
+          >
             <div className="panel-title panel-title-row">
               <div>
                 <Radio size={20} />
@@ -514,42 +556,42 @@ export function Dashboard({ token, username, onLogout }: DashboardProps) {
               )}
             </div>
           </section>
-
-          <section className="panel" aria-labelledby="status-title">
-            <div className="panel-title">
-              <SlidersHorizontal size={20} />
-              <h2 id="status-title">Status</h2>
-            </div>
-
-            <div className="status-box">
-              <div className="status-row">
-                <span>{jobStatus ? jobStatus.status : "inactiv"}</span>
-                <strong>{progress}%</strong>
-              </div>
-              <div className="progress-track" aria-hidden="true">
-                <span style={{ width: `${progress}%` }} />
-              </div>
-              {selectedVoice && (
-                <p className="muted">Voce selectata: {selectedVoice.name}</p>
-              )}
-              {jobStatus?.error && <p className="form-error">{jobStatus.error}</p>}
-            </div>
-
-            {jobStatus?.resultUrl && (
-              <div className="result-actions">
-                <video className="video-preview result-video" controls src={jobStatus.resultUrl} />
-                <a className="ghost-button" href={jobStatus.resultUrl} download>
-                  <Download size={17} />
-                  Descarca
-                </a>
-                <a className="ghost-button" href={jobStatus.resultUrl} target="_blank">
-                  <Play size={17} />
-                  Deschide
-                </a>
-              </div>
-            )}
-          </section>
         </aside>
+
+        <section className="panel status-panel" aria-labelledby="status-title">
+          <div className="panel-title">
+            <SlidersHorizontal size={20} />
+            <h2 id="status-title">Status</h2>
+          </div>
+
+          <div className="status-box">
+            <div className="status-row">
+              <span>{jobStatus ? jobStatus.status : "inactiv"}</span>
+              <strong>{progress}%</strong>
+            </div>
+            <div className="progress-track" aria-hidden="true">
+              <span style={{ width: `${progress}%` }} />
+            </div>
+            {selectedVoice && (
+              <p className="muted">Voce selectata: {selectedVoice.name}</p>
+            )}
+            {jobStatus?.error && <p className="form-error">{jobStatus.error}</p>}
+          </div>
+
+          {jobStatus?.resultUrl && (
+            <div className="result-actions">
+              <video className="video-preview result-video" controls src={jobStatus.resultUrl} />
+              <a className="ghost-button" href={jobStatus.resultUrl} download>
+                <Download size={17} />
+                Descarca
+              </a>
+              <a className="ghost-button" href={jobStatus.resultUrl} target="_blank">
+                <Play size={17} />
+                Deschide
+              </a>
+            </div>
+          )}
+        </section>
       </form>
     </main>
   );

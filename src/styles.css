@@ -262,10 +262,11 @@ textarea:focus {
 
 .workspace-grid {
   grid-template-columns: minmax(0, 1fr) minmax(320px, 410px);
+  grid-template-rows: auto auto;
   width: min(100%, 1180px);
   margin: 0 auto;
   gap: 18px;
-  align-items: start;
+  align-items: stretch;
 }
 
 .workspace-grid > *,
@@ -275,14 +276,40 @@ textarea:focus {
   min-width: 0;
 }
 
+.workspace-grid > *,
+.side-stack,
+.voices-panel {
+  min-height: 0;
+}
+
 .side-stack,
 .voice-list,
 .result-actions {
   gap: 14px;
 }
 
+.side-stack {
+  grid-template-rows: minmax(0, 1fr);
+  align-self: stretch;
+  height: 100%;
+  overflow: hidden;
+}
+
+.status-panel {
+  grid-column: 1 / -1;
+}
+
+.voices-panel {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
 .voice-list {
-  max-height: 520px;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   padding-right: 4px;
   scrollbar-gutter: stable;
