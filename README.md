@@ -62,7 +62,7 @@ Randarea trimite `multipart/form-data` cu `video`, `text`, `voiceId` si `speedSc
 
 ## Server VPS intr-un singur fisier
 
-Serverul este in `server.mjs` si expune acelasi contract folosit de frontend. Ruleaza cu Node.js si apeleaza Gemini TTS prin `@google/genai`, apoi lipeste audio-ul in video cu `ffmpeg`.
+Serverul este in `server.mjs` si expune acelasi contract folosit de frontend. Ruleaza cu Node.js si apeleaza Gemini TTS prin `@google/genai`, converteste PCM-ul TTS in WAV cu `ffmpeg`, apoi lipeste audio-ul in video tot cu `ffmpeg`.
 
 Implicit, serverul este configurat pentru cheia din Google AI Studio:
 

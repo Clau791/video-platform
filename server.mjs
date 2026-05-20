@@ -245,28 +245,6 @@ function runCommand(command, args) {
   });
 }
 
-function wavHeader(byteLength, sampleRate = 24000, channels = 1, bitDepth = 16) {
-  const blockAlign = (channels * bitDepth) / 8;
-  const byteRate = sampleRate * blockAlign;
-  const header = Buffer.alloc(44);
-
-  header.write("RIFF", 0);
-  header.writeUInt32LE(36 + byteLength, 4);
-  header.write("WAVE", 8);
-  header.write("fmt ", 12);
-  header.writeUInt32LE(16, 16);
-  header.writeUInt16LE(1, 20);
-  header.writeUInt16LE(channels, 22);
-  header.writeUInt32LE(sampleRate, 24);
-  header.writeUInt32LE(byteRate, 28);
-  header.writeUInt16LE(blockAlign, 32);
-  header.writeUInt16LE(bitDepth, 34);
-  header.write("data", 36);
-  header.writeUInt32LE(byteLength, 40);
-
-  return header;
-}
-
 function parseSampleRate(mimeType = "") {
   const match = mimeType.match(/rate=(\d+)/i);
   return match ? Number(match[1]) : 24000;
@@ -274,6 +252,29 @@ function parseSampleRate(mimeType = "") {
 
 function buildTtsPrompt(text) {
   return `Rosteste in limba romana, clar si natural, exact textul dintre ghilimele. Nu adauga alte cuvinte. Text: "${text}"`;
+}
+
+async function writePcmAsWav(pcm, outputPath, sampleRate) {
+  const rawPath = path.join(TMP_DIR, `${crypto.randomUUID()}.pcm`);
+
+  await fs.writeFile(rawPath, pcm);
+
+  try {
+    await runCommand("ffmpeg", [
+      "-y",
+      "-f",
+      "s16le",
+      "-ar",
+      String(sampleRate),
+      "-ac",
+      "1",
+      "-i",
+      rawPath,
+      outputPath,
+    ]);
+  } finally {
+    await fs.rm(rawPath, { force: true });
+  }
 }
 
 async function writeGeminiTtsWav({ text, voiceId, outputPath }) {
@@ -314,9 +315,14 @@ async function writeGeminiTtsWav({ text, voiceId, outputPath }) {
     typeof inlineData.data === "string"
       ? Buffer.from(inlineData.data, "base64")
       : Buffer.from(inlineData.data);
-  const sampleRate = parseSampleRate(inlineData.mimeType || inlineData.mime_type);
+  const mimeType = inlineData.mimeType || inlineData.mime_type || "";
 
-  await fs.writeFile(outputPath, Buffer.concat([wavHeader(pcm.length, sampleRate), pcm]));
+  if (mimeType.includes("wav") || mimeType.includes("wave")) {
+    await fs.writeFile(outputPath, pcm);
+    return;
+  }
+
+  await writePcmAsWav(pcm, outputPath, parseSampleRate(mimeType));
 }
 
 async function adjustAudioSpeed(inputPath, outputPath, speedScale) {
