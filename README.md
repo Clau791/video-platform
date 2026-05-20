@@ -93,13 +93,16 @@ GEMINI_API_KEY=cheia-ta-google-ai-studio
 GEMINI_TTS_MODEL=gemini-3.1-flash-tts-preview
 TTS_PCM_FORMAT=s16le
 TTS_SAMPLE_RATE=
+COMMAND_TIMEOUT_MS=600000
+FILE_TTL_HOURS=24
+CLEANUP_INTERVAL_MINUTES=60
 ```
 
 Pornire:
 
 ```bash
 npm run build
-npm run server
+npm run server:prod
 ```
 
 Aplicatia completa va fi disponibila la `http://152.67.155.30:8080`.

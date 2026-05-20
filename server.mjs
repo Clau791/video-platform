@@ -35,6 +35,9 @@ const TTS_PCM_FORMAT = process.env.TTS_PCM_FORMAT || "s16le";
 const TTS_SAMPLE_RATE = process.env.TTS_SAMPLE_RATE
   ? Number(process.env.TTS_SAMPLE_RATE)
   : null;
+const COMMAND_TIMEOUT_MS = Number(process.env.COMMAND_TIMEOUT_MS || 10 * 60 * 1000);
+const FILE_TTL_MS = Number(process.env.FILE_TTL_HOURS || 24) * 60 * 60 * 1000;
+const CLEANUP_INTERVAL_MS = Number(process.env.CLEANUP_INTERVAL_MINUTES || 60) * 60 * 1000;
 const MAX_VIDEO_SIZE_BYTES =
   Number(process.env.MAX_VIDEO_SIZE_MB || 500) * 1024 * 1024;
 const DATA_DIR = process.env.DATA_DIR
@@ -50,6 +53,14 @@ const INDEX_HTML_PATH = path.join(DIST_DIR, "index.html");
 const app = express();
 const jobs = new Map();
 const ai = createGoogleGenAIClient();
+
+process.on("unhandledRejection", (reason) => {
+  console.error("Unhandled promise rejection:", reason);
+});
+
+process.on("uncaughtException", (error) => {
+  console.error("Uncaught exception:", error);
+});
 
 const voices = [
   {
@@ -450,25 +461,50 @@ function jobUrl(folder, filename) {
   return `${PUBLIC_BASE_URL}/files/${folder}/${encodeURIComponent(filename)}`;
 }
 
-function runCommand(command, args) {
+function runCommand(command, args, timeoutMs = COMMAND_TIMEOUT_MS) {
   return new Promise((resolve, reject) => {
     const child = spawn(command, args, { stdio: ["ignore", "pipe", "pipe"] });
     let stderr = "";
+    let settled = false;
+
+    const finish = (callback) => {
+      if (settled) {
+        return;
+      }
+
+      settled = true;
+      windowClearTimeout(timeoutId);
+      callback();
+    };
+
+    const timeoutId = setTimeout(() => {
+      child.kill("SIGKILL");
+      finish(() =>
+        reject(new Error(`${command} timed out after ${Math.round(timeoutMs / 1000)}s`)),
+      );
+    }, timeoutMs);
 
     child.stderr.on("data", (chunk) => {
       stderr += chunk.toString();
     });
 
-    child.on("error", reject);
+    child.on("error", (error) => {
+      finish(() => reject(error));
+    });
+
     child.on("close", (code) => {
       if (code === 0) {
-        resolve();
+        finish(resolve);
         return;
       }
 
-      reject(new Error(stderr || `${command} exited with code ${code}`));
+      finish(() => reject(new Error(stderr || `${command} exited with code ${code}`)));
     });
   });
+}
+
+function windowClearTimeout(timeoutId) {
+  clearTimeout(timeoutId);
 }
 
 function parseSampleRate(mimeType = "") {
@@ -701,7 +737,35 @@ async function processRender(jobId) {
     job.status = "failed";
     job.progress = 100;
     job.error = error instanceof Error ? error.message : "Randarea a esuat.";
+    console.error(`Render job ${jobId} failed:`, error);
   }
+}
+
+async function cleanupOldFiles(directory) {
+  const entries = await fs.readdir(directory, { withFileTypes: true });
+  const now = Date.now();
+
+  await Promise.allSettled(
+    entries
+      .filter((entry) => entry.isFile())
+      .map(async (entry) => {
+        const filePath = path.join(directory, entry.name);
+        const stats = await fs.stat(filePath);
+
+        if (now - stats.mtimeMs > FILE_TTL_MS) {
+          await fs.rm(filePath, { force: true });
+        }
+      }),
+  );
+}
+
+async function cleanupServerData() {
+  await Promise.allSettled([
+    cleanupOldFiles(UPLOAD_DIR),
+    cleanupOldFiles(OUTPUT_DIR),
+    cleanupOldFiles(PREVIEW_DIR),
+    cleanupOldFiles(TMP_DIR),
+  ]);
 }
 
 app.get("/health", (_req, res) => {
@@ -855,6 +919,11 @@ await Promise.all([
   fs.mkdir(PREVIEW_DIR, { recursive: true }),
   fs.mkdir(TMP_DIR, { recursive: true }),
 ]);
+
+void cleanupServerData();
+setInterval(() => {
+  void cleanupServerData();
+}, CLEANUP_INTERVAL_MS).unref();
 
 app.listen(PORT, () => {
   console.log(`Video TTS server listening on ${PUBLIC_BASE_URL}`);
