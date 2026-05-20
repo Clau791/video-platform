@@ -31,6 +31,10 @@ const GOOGLE_CLOUD_LOCATION = process.env.GOOGLE_CLOUD_LOCATION || "global";
 const GEMINI_TTS_MODEL =
   process.env.GEMINI_TTS_MODEL ||
   (USE_ENTERPRISE ? "gemini-2.5-flash-tts" : "gemini-3.1-flash-tts-preview");
+const TTS_PCM_FORMAT = process.env.TTS_PCM_FORMAT || "s16le";
+const TTS_SAMPLE_RATE = process.env.TTS_SAMPLE_RATE
+  ? Number(process.env.TTS_SAMPLE_RATE)
+  : null;
 const MAX_VIDEO_SIZE_BYTES =
   Number(process.env.MAX_VIDEO_SIZE_MB || 500) * 1024 * 1024;
 const DATA_DIR = process.env.DATA_DIR
@@ -263,7 +267,7 @@ async function writePcmAsWav(pcm, outputPath, sampleRate) {
     await runCommand("ffmpeg", [
       "-y",
       "-f",
-      "s16le",
+      TTS_PCM_FORMAT,
       "-ar",
       String(sampleRate),
       "-ac",
@@ -275,6 +279,24 @@ async function writePcmAsWav(pcm, outputPath, sampleRate) {
   } finally {
     await fs.rm(rawPath, { force: true });
   }
+}
+
+function detectAudioContainer(buffer) {
+  const signature = buffer.subarray(0, 12).toString("ascii");
+
+  if (signature.startsWith("RIFF") && signature.includes("WAVE")) {
+    return "wav";
+  }
+
+  if (signature.startsWith("ID3") || buffer[0] === 0xff) {
+    return "mp3";
+  }
+
+  if (signature.startsWith("OggS")) {
+    return "ogg";
+  }
+
+  return "";
 }
 
 async function writeGeminiTtsWav({ text, voiceId, outputPath }) {
@@ -316,13 +338,38 @@ async function writeGeminiTtsWav({ text, voiceId, outputPath }) {
       ? Buffer.from(inlineData.data, "base64")
       : Buffer.from(inlineData.data);
   const mimeType = inlineData.mimeType || inlineData.mime_type || "";
+  const detectedContainer = detectAudioContainer(pcm);
+  const sampleRate = TTS_SAMPLE_RATE || parseSampleRate(mimeType);
 
-  if (mimeType.includes("wav") || mimeType.includes("wave")) {
+  console.log(
+    `Gemini TTS audio: voice=${voice.id} mime="${mimeType || "unknown"}" ` +
+      `bytes=${pcm.length} container=${detectedContainer || "pcm"} ` +
+      `pcmFormat=${TTS_PCM_FORMAT} sampleRate=${sampleRate}`,
+  );
+
+  if (
+    mimeType.includes("wav") ||
+    mimeType.includes("wave") ||
+    detectedContainer === "wav"
+  ) {
     await fs.writeFile(outputPath, pcm);
     return;
   }
 
-  await writePcmAsWav(pcm, outputPath, parseSampleRate(mimeType));
+  if (detectedContainer === "mp3" || detectedContainer === "ogg") {
+    const inputPath = path.join(TMP_DIR, `${crypto.randomUUID()}.${detectedContainer}`);
+    await fs.writeFile(inputPath, pcm);
+
+    try {
+      await runCommand("ffmpeg", ["-y", "-i", inputPath, outputPath]);
+    } finally {
+      await fs.rm(inputPath, { force: true });
+    }
+
+    return;
+  }
+
+  await writePcmAsWav(pcm, outputPath, sampleRate);
 }
 
 async function adjustAudioSpeed(inputPath, outputPath, speedScale) {

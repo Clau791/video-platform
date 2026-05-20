@@ -91,6 +91,8 @@ TOKEN_SECRET=un-secret-lung
 GENAI_BACKEND=gemini
 GEMINI_API_KEY=cheia-ta-google-ai-studio
 GEMINI_TTS_MODEL=gemini-3.1-flash-tts-preview
+TTS_PCM_FORMAT=s16le
+TTS_SAMPLE_RATE=
 ```
 
 Pornire:
