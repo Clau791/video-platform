@@ -53,20 +53,20 @@ const ai = createGoogleGenAIClient();
 
 const voices = [
   {
-    id: "Kore",
-    name: "Kore",
+    id: "Zephyr",
+    name: "Zephyr",
     language: "Multilingual",
-    gender: "Feminin",
-    style: "clar, profesional",
+    gender: "Neutru",
+    style: "bright",
     sampleText:
-      "Buna, sunt vocea Kore si voi citi natural textul tau in limba romana.",
+      "Buna, sunt vocea Zephyr si pot reda un mesaj romanesc luminos si clar.",
   },
   {
     id: "Puck",
     name: "Puck",
     language: "Multilingual",
     gender: "Masculin",
-    style: "energic, conversațional",
+    style: "upbeat",
     sampleText:
       "Buna, sunt vocea Puck si pot livra un mesaj romanesc energic si clar.",
   },
@@ -75,25 +75,25 @@ const voices = [
     name: "Charon",
     language: "Multilingual",
     gender: "Masculin",
-    style: "profund, narativ",
+    style: "informative",
     sampleText:
       "Buna, sunt vocea Charon si pot narra calm povestea videoclipului tau.",
   },
   {
-    id: "Aoede",
-    name: "Aoede",
+    id: "Kore",
+    name: "Kore",
     language: "Multilingual",
     gender: "Feminin",
-    style: "cald, expresiv",
+    style: "firm",
     sampleText:
-      "Buna, sunt vocea Aoede si pot spune textul tau cu ton cald si expresiv.",
+      "Buna, sunt vocea Kore si voi citi natural textul tau in limba romana.",
   },
   {
     id: "Fenrir",
     name: "Fenrir",
     language: "Multilingual",
     gender: "Masculin",
-    style: "ferm, studio",
+    style: "excitable",
     sampleText:
       "Buna, sunt vocea Fenrir si pot prezenta mesajul intr-un stil ferm de studio.",
   },
@@ -102,9 +102,225 @@ const voices = [
     name: "Leda",
     language: "Multilingual",
     gender: "Feminin",
-    style: "natural, curat",
+    style: "youthful",
     sampleText:
       "Buna, sunt vocea Leda si pot rosti propozitii romanesti natural si curat.",
+  },
+  {
+    id: "Orus",
+    name: "Orus",
+    language: "Multilingual",
+    gender: "Masculin",
+    style: "firm",
+    sampleText:
+      "Buna, sunt vocea Orus si pot transmite textul tau cu un ton sigur si stabil.",
+  },
+  {
+    id: "Aoede",
+    name: "Aoede",
+    language: "Multilingual",
+    gender: "Feminin",
+    style: "breezy",
+    sampleText:
+      "Buna, sunt vocea Aoede si pot spune textul tau cu ton cald si expresiv.",
+  },
+  {
+    id: "Callirrhoe",
+    name: "Callirrhoe",
+    language: "Multilingual",
+    gender: "Feminin",
+    style: "easy-going",
+    sampleText:
+      "Buna, sunt vocea Callirrhoe si pot reda un mesaj romanesc relaxat si prietenos.",
+  },
+  {
+    id: "Autonoe",
+    name: "Autonoe",
+    language: "Multilingual",
+    gender: "Feminin",
+    style: "bright",
+    sampleText:
+      "Buna, sunt vocea Autonoe si pot citi textul tau cu energie luminoasa.",
+  },
+  {
+    id: "Enceladus",
+    name: "Enceladus",
+    language: "Multilingual",
+    gender: "Masculin",
+    style: "breathy",
+    sampleText:
+      "Buna, sunt vocea Enceladus si pot oferi o interpretare usoara si aerata.",
+  },
+  {
+    id: "Iapetus",
+    name: "Iapetus",
+    language: "Multilingual",
+    gender: "Masculin",
+    style: "clear",
+    sampleText:
+      "Buna, sunt vocea Iapetus si pot rosti clar fiecare propozitie in romana.",
+  },
+  {
+    id: "Umbriel",
+    name: "Umbriel",
+    language: "Multilingual",
+    gender: "Masculin",
+    style: "easy-going",
+    sampleText:
+      "Buna, sunt vocea Umbriel si pot citi textul tau intr-un stil relaxat.",
+  },
+  {
+    id: "Algieba",
+    name: "Algieba",
+    language: "Multilingual",
+    gender: "Masculin",
+    style: "smooth",
+    sampleText:
+      "Buna, sunt vocea Algieba si pot livra un mesaj romanesc lin si placut.",
+  },
+  {
+    id: "Despina",
+    name: "Despina",
+    language: "Multilingual",
+    gender: "Feminin",
+    style: "smooth",
+    sampleText:
+      "Buna, sunt vocea Despina si pot citi natural, cu o tonalitate neteda.",
+  },
+  {
+    id: "Erinome",
+    name: "Erinome",
+    language: "Multilingual",
+    gender: "Feminin",
+    style: "clear",
+    sampleText:
+      "Buna, sunt vocea Erinome si pot transforma textul tau in audio clar.",
+  },
+  {
+    id: "Algenib",
+    name: "Algenib",
+    language: "Multilingual",
+    gender: "Masculin",
+    style: "gravelly",
+    sampleText:
+      "Buna, sunt vocea Algenib si pot reda mesajul cu o textura vocala grava.",
+  },
+  {
+    id: "Rasalgethi",
+    name: "Rasalgethi",
+    language: "Multilingual",
+    gender: "Masculin",
+    style: "informative",
+    sampleText:
+      "Buna, sunt vocea Rasalgethi si pot explica informatia intr-un ton clar.",
+  },
+  {
+    id: "Laomedeia",
+    name: "Laomedeia",
+    language: "Multilingual",
+    gender: "Feminin",
+    style: "upbeat",
+    sampleText:
+      "Buna, sunt vocea Laomedeia si pot aduce un ritm vesel textului tau.",
+  },
+  {
+    id: "Achernar",
+    name: "Achernar",
+    language: "Multilingual",
+    gender: "Feminin",
+    style: "soft",
+    sampleText:
+      "Buna, sunt vocea Achernar si pot rosti mesajul cu o voce blanda.",
+  },
+  {
+    id: "Alnilam",
+    name: "Alnilam",
+    language: "Multilingual",
+    gender: "Masculin",
+    style: "firm",
+    sampleText:
+      "Buna, sunt vocea Alnilam si pot citi textul tau intr-un ton hotarat.",
+  },
+  {
+    id: "Schedar",
+    name: "Schedar",
+    language: "Multilingual",
+    gender: "Masculin",
+    style: "even",
+    sampleText:
+      "Buna, sunt vocea Schedar si pot pastra o intonatie echilibrata.",
+  },
+  {
+    id: "Gacrux",
+    name: "Gacrux",
+    language: "Multilingual",
+    gender: "Masculin",
+    style: "mature",
+    sampleText:
+      "Buna, sunt vocea Gacrux si pot oferi un ton matur si asezat.",
+  },
+  {
+    id: "Pulcherrima",
+    name: "Pulcherrima",
+    language: "Multilingual",
+    gender: "Feminin",
+    style: "forward",
+    sampleText:
+      "Buna, sunt vocea Pulcherrima si pot prezenta mesajul direct si clar.",
+  },
+  {
+    id: "Achird",
+    name: "Achird",
+    language: "Multilingual",
+    gender: "Masculin",
+    style: "friendly",
+    sampleText:
+      "Buna, sunt vocea Achird si pot vorbi intr-un stil prietenos.",
+  },
+  {
+    id: "Zubenelgenubi",
+    name: "Zubenelgenubi",
+    language: "Multilingual",
+    gender: "Masculin",
+    style: "casual",
+    sampleText:
+      "Buna, sunt vocea Zubenelgenubi si pot reda textul intr-un ton casual.",
+  },
+  {
+    id: "Vindemiatrix",
+    name: "Vindemiatrix",
+    language: "Multilingual",
+    gender: "Feminin",
+    style: "gentle",
+    sampleText:
+      "Buna, sunt vocea Vindemiatrix si pot citi mesajul cu delicatete.",
+  },
+  {
+    id: "Sadachbia",
+    name: "Sadachbia",
+    language: "Multilingual",
+    gender: "Masculin",
+    style: "lively",
+    sampleText:
+      "Buna, sunt vocea Sadachbia si pot aduce mai multa viata textului tau.",
+  },
+  {
+    id: "Sadaltager",
+    name: "Sadaltager",
+    language: "Multilingual",
+    gender: "Masculin",
+    style: "knowledgeable",
+    sampleText:
+      "Buna, sunt vocea Sadaltager si pot suna informat si sigur.",
+  },
+  {
+    id: "Sulafat",
+    name: "Sulafat",
+    language: "Multilingual",
+    gender: "Feminin",
+    style: "warm",
+    sampleText:
+      "Buna, sunt vocea Sulafat si pot rosti textul tau intr-un ton cald.",
   },
 ];
 
